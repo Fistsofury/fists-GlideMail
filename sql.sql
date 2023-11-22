@@ -11,5 +11,7 @@ CREATE TABLE mailbox_messages (
     message TEXT,
     subject VARCHAR(255),
     location VARCHAR(255),
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    eta_timestamp BIGINT
 );

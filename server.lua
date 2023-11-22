@@ -1,10 +1,10 @@
 local VorpCore = {}
 
+
 TriggerEvent("getCore", function(core)
     VorpCore = core
 end)
 
--- Event to check for mailbox ID
 RegisterNetEvent("Fists-GlideMail:checkMailbox")
 AddEventHandler("Fists-GlideMail:checkMailbox", function()
     local _source = source
@@ -33,9 +33,20 @@ AddEventHandler("Fists-GlideMail:checkMail", function()
     exports.oxmysql:execute('SELECT mailbox_id FROM mailboxes WHERE char_identifier = ?', {charidentifier}, function(result)
         if result and #result > 0 then
             local recipientMailboxId = result[1].mailbox_id
+
             exports.oxmysql:execute('SELECT * FROM mailbox_messages WHERE to_char = ?', {recipientMailboxId}, function(mails)
-                if mails then
-                    TriggerClientEvent("Fists-GlideMail:receiveMails", _source, mails)
+                if mails and #mails > 0 then
+                    local currentTime = os.time()
+                    local filteredMails = {}
+
+                    for _, mail in ipairs(mails) do
+                        print("Mail ETA Timestamp: ", mail.eta_timestamp)
+                        if mail.eta_timestamp and currentTime >= mail.eta_timestamp then
+                            table.insert(filteredMails, mail)
+                        end
+                    end
+
+                    TriggerClientEvent("Fists-GlideMail:receiveMails", _source, filteredMails)
                 else
                     TriggerClientEvent("vorp:TipRight", _source, "No mails found", 5000)
                 end
@@ -47,6 +58,7 @@ AddEventHandler("Fists-GlideMail:checkMail", function()
 end)
 
 
+
 RegisterNetEvent("Fists-GlideMail:registerMailbox")
 AddEventHandler("Fists-GlideMail:registerMailbox", function()
     local _source = source
@@ -56,7 +68,6 @@ AddEventHandler("Fists-GlideMail:registerMailbox", function()
     local charidentifier = Character.charIdentifier
     local first_name = Character.firstName
     local last_name = Character.lastName
-
 
     if Character.money >= Config.RegistrationFee then
         Character.removeCurrency(0, Config.RegistrationFee)
@@ -76,15 +87,14 @@ end)
     
 
 RegisterNetEvent("Fists-GlideMail:sendMail")
-AddEventHandler("Fists-GlideMail:sendMail", function(recipientId, subject, message, location)
+AddEventHandler("Fists-GlideMail:sendMail", function(recipientId, subject, message, location, eta)
     local _source = source
     local User = VorpCore.getUser(source)
     local Character = User.getUsedCharacter
     local identifier = Character.identifier
     local charidentifier = Character.charIdentifier
-
+    local etaTimestamp = os.time() + eta
     if Character.money >= Config.SendMessageFee then
-
         Character.removeCurrency(0, Config.SendMessageFee)
 
         exports.oxmysql:query('SELECT mailbox_id FROM mailboxes WHERE char_identifier = ?', {charidentifier}, function(senderResult)
@@ -92,8 +102,8 @@ AddEventHandler("Fists-GlideMail:sendMail", function(recipientId, subject, messa
                 local senderMailboxId = senderResult[1].mailbox_id
                 if recipientId and recipientId ~= "" and subject and subject ~= "" and message and message ~= "" and location and location ~= "" then
                     local timestamp = os.date('%Y-%m-%d %H:%M:%S') 
-                    exports.oxmysql:insert('INSERT INTO mailbox_messages (from_char, to_char, subject, message, location, timestamp) VALUES (?, ?, ?, ?, ?, ?)', 
-                    {senderMailboxId, recipientId, subject, message, location, timestamp}, function(inserted)
+                    exports.oxmysql:insert('INSERT INTO mailbox_messages (from_char, to_char, subject, message, location, timestamp, eta_timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+                    {senderMailboxId, recipientId, subject, message, location, os.date('%Y-%m-%d %H:%M:%S'), etaTimestamp}, function(inserted)
                         if inserted then
                             TriggerClientEvent("vorp:TipRight", _source, "You have sent a message", 5000)
                         else
@@ -101,7 +111,6 @@ AddEventHandler("Fists-GlideMail:sendMail", function(recipientId, subject, messa
                         end
                     end)
                 else
-                    --Support Debugs
                     print("Invalid recipient mailbox ID: " .. tostring(recipientId))
                     print("Invalid message: " .. tostring(message))
                     print("Invalid location: " .. tostring(location))
@@ -114,6 +123,19 @@ AddEventHandler("Fists-GlideMail:sendMail", function(recipientId, subject, messa
     else
         TriggerClientEvent("vorp:TipRight", _source, "Not enough money to send a message.", 5000)
     end
+end)
+
+RegisterNetEvent("Fists-GlideMail:deleteMail")
+AddEventHandler("Fists-GlideMail:deleteMail", function(mailId)
+    local _source = source
+
+    exports.oxmysql:execute('DELETE FROM mailbox_messages WHERE id = ?', {mailId}, function(affectedRows)
+        if affectedRows then
+            TriggerClientEvent("vorp:TipRight", _source, "Mail deleted successfully.", 5000)
+        else
+            TriggerClientEvent("vorp:TipRight", _source, "Failed to delete mail.", 5000)
+        end
+    end)
 end)
 
 
