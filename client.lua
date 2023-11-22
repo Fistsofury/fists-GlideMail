@@ -21,15 +21,15 @@ function OpenMailboxMenu(hasMailbox)
                 ['background-repeat'] = 'no-repeat',
                     ['background-position'] = 'center',
                     ['background-color'] = 'rgba(55, 33, 14, 0.7)', -- A leather-like brown
-                    ['border'] = '1px solid #654321', -- Darker border color
-                    ['font-family'] = 'Times New Roman, serif', -- Or another Western-style font if available
+                    ['border'] = '1px solid #654321', r
+                    ['font-family'] = 'Times New Roman, serif', 
                     ['font-size'] = '38px',
-                    ['color'] = '#ffffff', -- Off-white text color
+                    ['color'] = '#ffffff', 
                     ['padding'] = '10px 20px',
                     ['margin-top'] = '5px',
-                    ['cursor'] = 'pointer', -- If the cursor is supported
-                    ['box-shadow'] = '3px 3px #333333', -- Optional, for a pressed-button effect
-                    ['text-transform'] = 'uppercase', -- Optional, for a more impactful look
+                    ['cursor'] = 'pointer', 
+                    ['box-shadow'] = '3px 3px #333333', 
+                    ['text-transform'] = 'uppercase', 
             },
             draggable = true
         })
@@ -223,7 +223,7 @@ function OpenMailboxMenu(hasMailbox)
                 local distance = CalculateDistanceBetweenCoords(playerCoords, location.coords)
                 local etaSeconds = distance * Config.TimePerMile
                 LocationETA = etaSeconds  -- Store raw ETA in seconds
-                local formattedETA = FormatTime(etaSeconds)  -- Format for display
+                local formattedETA = FormatTime(etaSeconds)  
         
                 -- Update the text display if it's available
                 if ETADisplay ~= nil then
@@ -341,9 +341,9 @@ function OpenMessagePage(mail)
     })
 
     MessagePage:RegisterElement('textdisplay', {
-        value = mail.message,  -- Accessing message from the mail object
+        value = mail.message,  
         style = {
-            ['color'] = '#000000',  -- Correcting the color hex code
+            ['color'] = '#000000',  
         }
     })
 
@@ -360,7 +360,7 @@ function OpenMessagePage(mail)
         slot = "footer",
         style = {
             ['background-color'] = '#cc0000',
-            ['color'] = '#ffffff',  -- Assuming you want white text on a red background
+            ['color'] = '#ffffff',  
         },
     }, function()
         TriggerServerEvent("Fists-GlideMail:deleteMail", mail.id)  -- Accessing ID from the mail object
