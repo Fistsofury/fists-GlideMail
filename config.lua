@@ -12,7 +12,8 @@ Config.MailboxLocations = {
     -- { name = "Another Location", coords = vector3(x, y, z) },
 }
 
-Config.PropLocations = {
+--[[Testing Code
+    Config.PropLocations = {
     {x = -187.81, y = 637.49, z = 114.55},--bw
     {x = -869.71, y = -1339.26, z = 43.2},--valentine
-}
+}]]

@@ -13,7 +13,12 @@ local playermailboxId = nil
 
 -- Function to open the mailbox menu
 function OpenMailboxMenu(hasMailbox)
+    SendMessagePage = nil
+    CheckMessagePage = nil
+    SelectLocationPage = nil
+    SelectLocationPage = nil
     if not MailboxMenu then
+        MailboxMenu = nil
         MailboxMenu = FeatherMenu:RegisterMenu('feather:mailbox:menu', {
             style = {
                 ['background-image'] = 'url("nui://fists-GlideMail/Mailtemplate.png")',
@@ -21,7 +26,7 @@ function OpenMailboxMenu(hasMailbox)
                 ['background-repeat'] = 'no-repeat',
                     ['background-position'] = 'center',
                     ['background-color'] = 'rgba(55, 33, 14, 0.7)', -- A leather-like brown
-                    ['border'] = '1px solid #654321', r
+                    ['border'] = '1px solid #654321', 
                     ['font-family'] = 'Times New Roman, serif', 
                     ['font-size'] = '38px',
                     ['color'] = '#ffffff', 
@@ -31,7 +36,7 @@ function OpenMailboxMenu(hasMailbox)
                     ['box-shadow'] = '3px 3px #333333', 
                     ['text-transform'] = 'uppercase', 
             },
-            draggable = true
+            draggable = true,
         })
     end
 
@@ -49,6 +54,7 @@ function OpenMailboxMenu(hasMailbox)
             }
         }, function()
             TriggerServerEvent("Fists-GlideMail:registerMailbox")
+            MailActionPage:RouteTo()
         end)
     
     end
@@ -105,7 +111,7 @@ function OpenMailboxMenu(hasMailbox)
         local subjectTitle = ''
 
         ETADisplay = SendMessagePage:RegisterElement('textdisplay', {
-            value = LocationETA,  -- Default value
+            value = LocationETA,  
             style = {
             }
         })
@@ -113,6 +119,7 @@ function OpenMailboxMenu(hasMailbox)
         SendMessagePage:RegisterElement('input', {
             label = "TO:",
             placeholder = "PO BOX of recipient",
+            persist = false,
             style = {
 
             }
@@ -123,11 +130,13 @@ function OpenMailboxMenu(hasMailbox)
 
         SendMessagePage:RegisterElement('textdisplay', {
             value = "Pick a option below to Send or view messages.",
+            persist = false,
             slot = "content",
             style = {}
         })
 
         SendMessagePage:RegisterElement('input', {
+            persist = false,
             label = "Subject",
             placeholder = "Subject title ",
             style = {
@@ -139,6 +148,7 @@ function OpenMailboxMenu(hasMailbox)
 
     SendMessagePage:RegisterElement('textarea', {
         label = '',
+        persist = false,
         placeholder = "Type your message here...",
         rows = "6",
         cols = "70",
@@ -160,18 +170,19 @@ function OpenMailboxMenu(hasMailbox)
         print("recipientId: ", recipientId, "subjectTitle: ", subjectTitle, "mailMessage: ", mailMessage, "selectedLocation: ", selectedLocation, "ETA Seconds", LocationETA)
         TriggerServerEvent("Fists-GlideMail:sendMail", recipientId, subjectTitle, mailMessage, selectedLocation, LocationETA)  -- Pass raw ETA seconds
         TriggerEvent('spawnPigeon')
+        
         MailActionPage:RouteTo()
     end)
     end
 
     SendMessagePage:RegisterElement('button', {
         label = "Back",
-        slot = "footer",
         style = {
         },
     }, function()
         SelectLocationPage:RouteTo()
     end)
+
 
     if not CheckMessagePage then
         CheckMessagePage = MailboxMenu:RegisterPage('checkmail:page')
@@ -185,7 +196,7 @@ function OpenMailboxMenu(hasMailbox)
 
     CheckMessagePage:RegisterElement('button', {
         label = "Back",
-        slot = "footer",
+        persist = false,
         style = {
         },
     }, function()
@@ -203,7 +214,6 @@ function OpenMailboxMenu(hasMailbox)
                  return #(coords1 - coords2)  -- Using vector subtraction to get distance
              end
      
-                     -- Function to format the ETA
              function FormatTime(seconds)
                  local minutes = math.floor(seconds / 60)
                  local seconds = math.floor(seconds % 60)
@@ -223,9 +233,9 @@ function OpenMailboxMenu(hasMailbox)
                 local distance = CalculateDistanceBetweenCoords(playerCoords, location.coords)
                 local etaSeconds = distance * Config.TimePerMile
                 LocationETA = etaSeconds  -- Store raw ETA in seconds
-                local formattedETA = FormatTime(etaSeconds)  
+                local formattedETA = FormatTime(etaSeconds)  -- Format for display
         
-                -- Update the text display if it's available
+
                 if ETADisplay ~= nil then
                     ETADisplay:update({
                         value = "ETA: " .. formattedETA
@@ -239,13 +249,11 @@ function OpenMailboxMenu(hasMailbox)
 
     SelectLocationPage:RegisterElement('button', {
         label = "Back",
-        slot = "footer",
         style = {
         },
     }, function()
         MailActionPage:RouteTo()
     end)
-
 
     if hasMailbox then
         MailboxMenu:Open({ startupPage = MailActionPage })
@@ -309,7 +317,7 @@ AddEventHandler("Fists-GlideMail:receiveMails", function(mails)
             local playerCoords = GetEntityCoords(PlayerPedId())
             local mailLocation = GetMailLocationCoords(mail.location)
             if IsPlayerAtLocation(playerCoords, mailLocation) then
-                OpenMessagePage(mail)  -- Pass the entire mail object
+                OpenMessagePage(mail)  
             else
                 TriggerEvent('vorp:TipRight', "Not at the correct location", 4000)
             end
@@ -343,7 +351,7 @@ function OpenMessagePage(mail)
     MessagePage:RegisterElement('textdisplay', {
         value = mail.message,  
         style = {
-            ['color'] = '#000000',  
+            ['color'] = '#000000', 
         }
     })
 
@@ -352,7 +360,7 @@ function OpenMessagePage(mail)
         slot = "footer",
         style = {},
     }, function()
-        MailActionPage:RouteTo()  
+        MailActionPage:RouteTo() 
     end)
 
     MessagePage:RegisterElement('button', {
@@ -363,7 +371,7 @@ function OpenMessagePage(mail)
             ['color'] = '#ffffff',  
         },
     }, function()
-        TriggerServerEvent("Fists-GlideMail:deleteMail", mail.id)  -- Accessing ID from the mail object
+        TriggerServerEvent("Fists-GlideMail:deleteMail", mail.id)  
         MailActionPage:RouteTo()  
     end)
 
@@ -388,7 +396,8 @@ end)
 
 
 
-Citizen.CreateThread(function()
+--[[ TESTING CODE
+    Citizen.CreateThread(function()
     local model = GetHashKey('mp005_p_mp_shadybirdcage01x')
     RequestModel(model)
     while not HasModelLoaded(model) do
@@ -397,6 +406,6 @@ Citizen.CreateThread(function()
     local obj = CreateObject(model, -869.71, -1339.26, 43.2, false, false, false)
     SetEntityAsMissionEntity(obj, true, true)
     SetModelAsNoLongerNeeded(model)
-end)
+end)]]
 
 
