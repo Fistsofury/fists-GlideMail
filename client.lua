@@ -44,7 +44,12 @@ function OpenMailboxMenu(hasMailbox)
         RegisterPage = MailboxMenu:RegisterPage('register:page')
         RegisterPage:RegisterElement('header', {
             value = 'Mailbox Registration',
-            slot = "header"
+            slot = "header",
+            style = {
+                ['font-family'] = 'Times New Roman, serif', 
+                ['text-transform'] = 'uppercase', 
+                ['color'] = 'rgb(0, 0, 0)',
+            }
         })
         
         RegisterPage:RegisterElement('button', {
@@ -62,10 +67,12 @@ function OpenMailboxMenu(hasMailbox)
     if not MailActionPage then
         MailActionPage = MailboxMenu:RegisterPage('mailaction:page')
         MailActionPage:RegisterElement('header', {
-            value = 'Mailbox Actions',
+            value = 'Mailbox Options',
             slot = "header",
             style = {
-                ['color'] = '#ffffff',
+                ['font-family'] = 'Times New Roman, serif', 
+                ['text-transform'] = 'uppercase', 
+                ['color'] = 'rgb(0, 0, 0)',
             }
         })
 
@@ -102,7 +109,9 @@ function OpenMailboxMenu(hasMailbox)
             value = 'Send Pigeon',
             slot = "header",
             style = {
-
+                ['font-family'] = 'Times New Roman, serif', 
+                ['text-transform'] = 'uppercase', 
+                ['color'] = 'rgb(0, 0, 0)',
             }
         })
 
@@ -113,6 +122,9 @@ function OpenMailboxMenu(hasMailbox)
         ETADisplay = SendMessagePage:RegisterElement('textdisplay', {
             value = LocationETA,  
             style = {
+                ['font-family'] = 'Times New Roman, serif', 
+                ['text-transform'] = 'uppercase', 
+                ['color'] = 'rgb(0, 0, 0)',
             }
         })
          
@@ -147,16 +159,14 @@ function OpenMailboxMenu(hasMailbox)
         end)
 
     SendMessagePage:RegisterElement('textarea', {
-        label = '',
+        label = 'Message',
         persist = false,
         placeholder = "Type your message here...",
         rows = "6",
         cols = "70",
         resize = true,
         style = {
-            ['color'] = 'black',  
             ['background-color'] = 'rgba(255, 255, 255, 0.6)',  
-            ['width'] = '80%',
         }
 
     }, function(data)
@@ -170,7 +180,7 @@ function OpenMailboxMenu(hasMailbox)
         print("recipientId: ", recipientId, "subjectTitle: ", subjectTitle, "mailMessage: ", mailMessage, "selectedLocation: ", selectedLocation, "ETA Seconds", LocationETA)
         TriggerServerEvent("Fists-GlideMail:sendMail", recipientId, subjectTitle, mailMessage, selectedLocation, LocationETA)  -- Pass raw ETA seconds
         TriggerEvent('spawnPigeon')
-        
+
         MailActionPage:RouteTo()
     end)
     end
@@ -178,6 +188,8 @@ function OpenMailboxMenu(hasMailbox)
     SendMessagePage:RegisterElement('button', {
         label = "Back",
         style = {
+            ['background-color'] = 'rgb(226, 0, 0)',
+            ['color'] = 'rgb(226, 0, 0)',
         },
     }, function()
         SelectLocationPage:RouteTo()
@@ -190,6 +202,9 @@ function OpenMailboxMenu(hasMailbox)
             value = 'Received Messages',
             slot = "header",
             style = {
+                ['font-family'] = 'Times New Roman, serif', 
+                ['text-transform'] = 'uppercase', 
+                ['color'] = 'rgb(0, 0, 0)',
             }
         })
     end
@@ -198,6 +213,8 @@ function OpenMailboxMenu(hasMailbox)
         label = "Back",
         persist = false,
         style = {
+            ['background-color'] = 'rgb(226, 0, 0)',
+            ['color'] = 'rgb(226, 0, 0)',
         },
     }, function()
         MailActionPage:RouteTo()
@@ -207,7 +224,12 @@ function OpenMailboxMenu(hasMailbox)
         SelectLocationPage = MailboxMenu:RegisterPage('selectlocation:page')
         SelectLocationPage:RegisterElement('header', {
             value = 'Select a Location',
-            slot = "header"
+            slot = "header",
+            style = {
+                ['font-family'] = 'Times New Roman, serif', 
+                ['text-transform'] = 'uppercase', 
+                ['color'] = 'rgb(0, 0, 0)',
+            }
         })
 
         function CalculateDistanceBetweenCoords(coords1, coords2)
@@ -250,6 +272,8 @@ function OpenMailboxMenu(hasMailbox)
     SelectLocationPage:RegisterElement('button', {
         label = "Back",
         style = {
+            ['background-color'] = 'rgb(226, 0, 0)',
+            ['color'] = 'rgb(226, 0, 0)',
         },
     }, function()
         MailActionPage:RouteTo()
@@ -263,7 +287,7 @@ function OpenMailboxMenu(hasMailbox)
 end
 
 
-RegisterCommand('mailopen', function()
+--[[RegisterCommand('mailopen', function()
     local playerCoords = GetEntityCoords(PlayerPedId())
     local nearMailbox = false
 
@@ -279,7 +303,7 @@ RegisterCommand('mailopen', function()
     else
         TriggerEvent('vorp:TipRight', "Not in the correct location", 4000)
     end
-end, false)
+end, false)]]
 
 RegisterNetEvent("Fists-GlideMail:mailboxStatus")
 AddEventHandler("Fists-GlideMail:mailboxStatus", function(hasMailbox, mailboxId)
@@ -345,20 +369,32 @@ function OpenMessagePage(mail)
 
     MessagePage:RegisterElement('header', {
         value = 'Message Content',
-        slot = "header"
+        slot = "header",
+        style = {
+            ['font-family'] = 'Times New Roman, serif', 
+            ['text-transform'] = 'uppercase', 
+            ['color'] = 'rgb(0, 0, 0)',
+        }
     })
 
     MessagePage:RegisterElement('textdisplay', {
         value = mail.message,  
         style = {
-            ['color'] = '#000000', 
+            ['color'] = '#000000',
+            ['max-height'] = '200px',  -- Fixed maximum height
+            ['overflow-y'] = 'auto',   -- Allows vertical scrolling
+            ['overflow-x'] = 'hidden', -- Prevents horizontal scrolling
+            -- Other styling properties as needed
         }
     })
 
     MessagePage:RegisterElement('button', {
         label = "Back",
         slot = "footer",
-        style = {},
+        style = {
+            ['background-color'] = 'rgb(226, 0, 0)',
+            ['color'] = 'rgb(226, 0, 0)',
+        },
     }, function()
         MailActionPage:RouteTo() 
     end)
@@ -394,6 +430,61 @@ AddEventHandler('spawnPigeon', function()
     SetModelAsNoLongerNeeded(model)
 end)
 
+
+    
+Citizen.CreateThread(function()
+    local PromptGroup = BccUtils.Prompt:SetupPromptGroup() 
+    local mailboxPrompt = nil
+
+    function registerMailboxPrompt()
+        if mailboxPrompt then
+            mailboxPrompt:DeletePrompt() 
+        end
+        mailboxPrompt = PromptGroup:RegisterPrompt("Open Mailbox", 0x4CC0E2FE, 1, 1, true, 'hold', {timedeventhash = "MEDIUM_TIMED_EVENT"})
+    end
+
+    while true do
+        Citizen.Wait(0)
+        local playerCoords = GetEntityCoords(PlayerPedId())
+        local nearMailbox = false
+
+        for _, location in pairs(Config.MailboxLocations) do
+            if Vdist(playerCoords, location.coords.x, location.coords.y, location.coords.z) < 2 then
+                nearMailbox = true
+                break
+            end
+        end
+
+        if nearMailbox then
+            if not mailboxPrompt then
+                registerMailboxPrompt()
+            end
+            PromptGroup:ShowGroup("Near Mailbox")
+
+            if mailboxPrompt:HasCompleted() then
+                TriggerServerEvent("Fists-GlideMail:checkMailbox")
+                registerMailboxPrompt() 
+            end
+        else
+            if mailboxPrompt then
+                mailboxPrompt:DeletePrompt()
+                mailboxPrompt = nil
+            end
+        end
+    end
+end)
+
+Citizen.CreateThread(function()
+    for _, location in ipairs(Config.MailboxLocations) do
+
+        local x, y, z = table.unpack(location.coords) 
+
+
+        local blip = BccUtils.Blip:SetBlip('Glide Mail', 'blip_ambient_delivery', 0.2, x, y, z)
+
+    end
+end)
+    
 
 
 --[[ TESTING CODE
