@@ -1,7 +1,8 @@
 # fists-GlideMail
 - A functional Mail Delivery System by Bird. Mail delivery time is dependent on distance needed for the pigeon to travel.
-- Message/Mail are location specefic meaning you can view that you have a mail but you cant view the mail unless you are at the specefic location.
+- Message/Mail are location specific meaning you can view that you have a mail but you cant view the mail unless you are at the specific location.
 - Please set all locations before the script, if you do make any changes especially removal of locations after, you will need to delete all mails from the mailbox messages tables with that location assigned.
+- Customisable CSS styling in each menu option!
 
 - <img src="https://i.imgur.com/4FuSG7z.png"> 
 - <img src="https://i.imgur.com/HMX4off.png"> 
