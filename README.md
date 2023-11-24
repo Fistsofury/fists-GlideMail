@@ -22,3 +22,7 @@
 # Still to Do
 Add Recipeint notification
 
+# Special Mentions
+- Idea from charlietonygene
+- Testers kinas & _elbob
+- Byte for Feather menu
