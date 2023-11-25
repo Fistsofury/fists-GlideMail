@@ -8,7 +8,6 @@ local MailboxMenu, RegisterPage, MailActionPage, SendMessagePage, CheckMessagePa
 local selectedLocation = ''
 local LocationETA = ''
 local ETADisplay = nil 
-
 local playermailboxId = nil
 
 -- Function to open the mailbox menu
@@ -17,6 +16,9 @@ function OpenMailboxMenu(hasMailbox)
     CheckMessagePage = nil
     SelectLocationPage = nil
     SelectLocationPage = nil
+    if playermailboxId == nil then
+        playermailboxId = "Not Registered"
+    end
     if not MailboxMenu then
         MailboxMenu = nil
         MailboxMenu = FeatherMenu:RegisterMenu('feather:mailbox:menu', {
@@ -76,7 +78,7 @@ function OpenMailboxMenu(hasMailbox)
             }
         })
 
-        MailActionPage:RegisterElement('textdisplay', {
+        MailboxDisplay = MailActionPage:RegisterElement('textdisplay', {
             value = "Your PO BOX number is:" ..playermailboxId,
             style = {
                 ['color'] = 'rgb(0, 0, 0)',
@@ -233,7 +235,7 @@ function OpenMailboxMenu(hasMailbox)
         })
 
         function CalculateDistanceBetweenCoords(coords1, coords2)
-                 return #(coords1 - coords2)  -- Using vector subtraction to get distance
+                 return #(coords1 - coords2)  -- 
              end
      
              function FormatTime(seconds)
@@ -321,6 +323,16 @@ AddEventHandler("Fists-GlideMail:registerResult", function(success, message)
         end)
 
     else
+    end
+end)
+
+RegisterNetEvent("Fists-GlideMail:updateMailboxId")
+AddEventHandler("Fists-GlideMail:updateMailboxId", function(newMailboxId)
+    playermailboxId = newMailboxId -- Update the playermailboxId variable
+    if MailboxDisplay ~= nil then
+        MailboxDisplay:update({
+            value = "Your PO BOX number is:" .. playermailboxId
+        })
     end
 end)
 

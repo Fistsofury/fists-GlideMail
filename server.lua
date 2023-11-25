@@ -62,19 +62,29 @@ end)
 RegisterNetEvent("Fists-GlideMail:registerMailbox")
 AddEventHandler("Fists-GlideMail:registerMailbox", function()
     local _source = source
-    local User = VorpCore.getUser(source)
+    local User = VorpCore.getUser(_source)
     local Character = User.getUsedCharacter
-    local identifier = Character.identifier
     local charidentifier = Character.charIdentifier
-    local first_name = Character.firstName
-    local last_name = Character.lastName
+    local first_name = Character.firstname
+    local last_name = Character.lastname
 
     if Character.money >= Config.RegistrationFee then
         Character.removeCurrency(0, Config.RegistrationFee)
 
-        exports.oxmysql:insert('INSERT INTO mailboxes (char_identifier, first_name, last_name) VALUES (?, ?, ?)', {charidentifier, first_name, last_name}, function(inserted)
-            if inserted then
-                TriggerClientEvent("Fists-GlideMail:registerResult", _source, true, "Mailbox registered successfully.")
+        -- Insert the new mailbox record
+        exports.oxmysql:insert('INSERT INTO mailboxes (char_identifier, first_name, last_name) VALUES (?, ?, ?)', 
+        {charidentifier, first_name, last_name}, function(insertId)
+            if insertId then
+                -- Fetch the new mailbox ID and send it to the client
+                exports.oxmysql:execute('SELECT mailbox_id FROM mailboxes WHERE mailbox_id = ?', {insertId}, function(result)
+                    if result and #result > 0 then
+                        local newMailboxId = result[1].mailbox_id
+                        TriggerClientEvent("Fists-GlideMail:updateMailboxId", _source, newMailboxId)
+                        TriggerClientEvent("Fists-GlideMail:registerResult", _source, true, "Mailbox registered successfully.")
+                    else
+                        TriggerClientEvent("Fists-GlideMail:registerResult", _source, false, "Error fetching new mailbox ID.")
+                    end
+                end)
             else
                 TriggerClientEvent("Fists-GlideMail:registerResult", _source, false, "Error in mailbox registration.")
             end
@@ -83,6 +93,7 @@ AddEventHandler("Fists-GlideMail:registerMailbox", function()
         TriggerClientEvent("vorp:TipRight", _source, "Not enough money to register a mailbox.", 5000)
     end
 end)
+
 
     
 
