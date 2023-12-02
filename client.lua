@@ -161,11 +161,11 @@ function OpenMailboxMenu(hasMailbox)
         end)
 
     SendMessagePage:RegisterElement('textarea', {
-        label = 'Message',
+        --label = 'Message',
         persist = false,
         placeholder = "Type your message here...",
         rows = "6",
-        cols = "70",
+        cols = "45",
         resize = true,
         style = {
             ['background-color'] = 'rgba(255, 255, 255, 0.6)',  
