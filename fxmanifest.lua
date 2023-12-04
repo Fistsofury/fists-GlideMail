@@ -4,7 +4,8 @@ game "rdr3"
 
 description 'Fistsofury : Glide Mail'
 client_scripts {
-	'client.lua'
+    'client/helpers/functions.lua',
+    'client/*.lua'
 }
 
 shared_scripts {
@@ -12,7 +13,7 @@ shared_scripts {
 }
 
 server_scripts {
-	'server.lua'
+	'server/server.lua'
 }
 
 files {
