@@ -22,6 +22,12 @@ function OpenMailboxMenu(hasMailbox)
     if not MailboxMenu then
         MailboxMenu = nil
         MailboxMenu = FeatherMenu:RegisterMenu('feather:mailbox:menu', {
+            top = "15%",
+            left = "25%",
+            ['720width'] = '900px',
+			['1080width'] = '1000px',
+			['2kwidth'] = '2000px',
+			['4kwidth'] = '3000px',
             style = {
                 ['background-image'] = 'url("nui://fists-GlideMail/Mailtemplate.png")',
                 ['background-size'] = 'cover',  
@@ -37,6 +43,11 @@ function OpenMailboxMenu(hasMailbox)
                     ['cursor'] = 'pointer', 
                     ['box-shadow'] = '3px 3px #333333', 
                     ['text-transform'] = 'uppercase', 
+            },
+            contentslot = {
+                style = {
+                    ['max-height'] = '650px',  -- Fixed maximum height
+                } -- Fixed maximum height
             },
             draggable = true,
         })
@@ -181,7 +192,9 @@ function OpenMailboxMenu(hasMailbox)
     }, function(data)
         print("recipientId: ", recipientId, "subjectTitle: ", subjectTitle, "mailMessage: ", mailMessage, "selectedLocation: ", selectedLocation, "ETA Seconds", LocationETA)
         TriggerServerEvent("Fists-GlideMail:sendMail", recipientId, subjectTitle, mailMessage, selectedLocation, LocationETA)  -- Pass raw ETA seconds
-        TriggerEvent('spawnPigeon')
+        if Config.SendPigeon then
+            TriggerEvent('spawnPigeon') 
+        end
 
         MailActionPage:RouteTo()
     end)
