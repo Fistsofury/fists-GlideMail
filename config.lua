@@ -3,6 +3,7 @@ Config = {}
 Config.RegistrationFee = 100 -- Cost to register
 Config.SendMessageFee = 10 --Cost to send messages
 Config.TimePerMile = 0.1 -- Time in seconds per mile
+Config.SendPigeon = true -- If you want the Pigeon or not
 
 Config.MailboxLocations = {
     { name = "Annesburg", coords = vector3(2939.47, 1288.51, 44.65) }, 
